@@ -1,13 +1,49 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet, Platform,Text,View,FlatList,SafeAreaView } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useEffect, useId, useState } from 'react';
+import { useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
+
+
 
 export default function HomeScreen() {
+  const [todos, setTodos] = useState([]); 
+  const [userId, setUserId] = useState(null);
+  const router = useRouter();
+
+
+
+  useEffect(() => {
+    
+      fetchData();
+      
+
+  },[userId]);
+  
+  async function fetchData(userId) {
+    const response = await fetch("http://localhost:8080/usuario/1");
+    const data = await response.json();
+    setTodos(data);
+  }
+
   return (
-    <ParallaxScrollView
+    <View style={styles.container}> 
+      <SafeAreaView> 
+        <FlatList 
+          data={todos}
+          keyExtractor={(todo) => todo.idusuario} 
+          renderItem={({ item }) => <Text>{item.nombre}</Text>} 
+          ListHeaderComponent={() => <Text style={styles.title}>Tareas</Text>}
+          contentContainerStyle={styles.contentContainerStyle} 
+          /> 
+          </SafeAreaView> 
+<StatusBar style="auto" /> 
+</View> 
+    /*<ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
         <Image
@@ -46,11 +82,28 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
-    </ParallaxScrollView>
+    </ParallaxScrollView>*/
+
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
+  container: { 
+  flex: 1, 
+  backgroundColor: "#E9E9EF", 
+  
+  },
+  contentContainerStyle: { 
+  padding: 15, 
+  
+  },
+  title: {
+  fontWeight: "800", 
+  fontsize: 28, 
+  marginBottom: 15, 
+  },
+});
+/*const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -67,4 +120,4 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
   },
-});
+});*/
